@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>consent</artifactId>
-  <version>0.2</version>
+  <version>0.3-SNAPSHOT</version>
   <name>consent</name>
   <description>A java implementation of the IAB consent string 1.1 spec</description>
 
@@ -17,7 +17,7 @@
     <connection>scm:git:git@github.com:deltaprojects/Consent-String-SDK-Java.git</connection>
     <developerConnection>scm:git:git@github.com:deltaprojects/Consent-String-SDK-Java.git</developerConnection>
     <url>scm:git:git@github.com/deltaprojects/Consent-String-SDK-Java</url>
-    <tag>0.2</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <build>
