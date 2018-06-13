@@ -1,0 +1,11 @@
+com/iab/gdpr/exception/GdprException.class
+com/iab/gdpr/util/ConsentStringParser.class
+com/iab/gdpr/Bits.class
+com/iab/gdpr/GdprConstants.class
+com/iab/gdpr/exception/VendorConsentParseException.class
+com/iab/gdpr/exception/VendorConsentCreateException.class
+com/iab/gdpr/VendorConsent.class
+com/iab/gdpr/exception/VendorConsentException.class
+com/iab/gdpr/VendorConsent$Builder.class
+com/iab/gdpr/VendorConsent$RangeEntry.class
+com/iab/gdpr/VendorConsent$1.class

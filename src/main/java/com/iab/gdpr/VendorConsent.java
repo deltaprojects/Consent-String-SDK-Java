@@ -15,13 +15,22 @@ import com.iab.gdpr.exception.VendorConsentException;
 import com.iab.gdpr.exception.VendorConsentParseException;
 import com.iab.gdpr.util.ConsentStringParser;
 
+import static com.iab.gdpr.GdprConstants.PURPOSES_OFFSET;
+import static com.iab.gdpr.GdprConstants.PURPOSES_SIZE;
+
 /**
  * This class implements a builder and a factory method for the IAB consent as specified in
  * https://github.com/InteractiveAdvertisingBureau/GDPR-Transparency-and-Consent-Framework/blob/master/
  * Draft_for_Public_Comment_Transparency%20%26%20Consent%20Framework%20-%20cookie%20and%20vendor%20list%20format%
  * 20specification%20v1.0a.pdf
  *
+ * @deprecated This is deprecated and will be removed in future versions
+ *   Use {@link com.iab.gdpr.consent.VendorConsentDecoder} to decode vendor consent string
+ *   Use {@link com.iab.gdpr.consent.implementation.v1.VendorConsentBuilder} to build version 1 consent string
+ *   Use {@link com.iab.gdpr.consent.VendorConsentEncoder} to encode vendor consent to string
+ *
  */
+@Deprecated
 public class VendorConsent {
     private static Decoder decoder = Base64.getUrlDecoder();
     // As per the GDPR framework guidelines padding should be ommitted
@@ -80,7 +89,7 @@ public class VendorConsent {
         this.integerPurposes = builder.integerPurposes;
 
         if (this.vendorEncodingType == GdprConstants.VENDOR_ENCODING_RANGE) {
-            int rangeEntrySize = 0;
+            int rangeEntrySize = rangeEntries.size(); // one bit SingleOrRange flag per entry
             for (RangeEntry entry : rangeEntries) {
                 if (entry.endVendorId == entry.startVendorId) {
                     rangeEntrySize += GdprConstants.VENDOR_ID_SIZE;
@@ -92,7 +101,7 @@ public class VendorConsent {
             boolean bitsFit = (bitSize % 8) == 0;
             this.bits = new Bits(new byte[bitSize / 8 + (bitsFit ? 0 : 1)]);
         } else {
-            int bitSize = GdprConstants.VENDOR_BITFIELD_OFFSET + this.maxVendorId - 1;
+            int bitSize = GdprConstants.VENDOR_BITFIELD_OFFSET + this.maxVendorId;
             boolean bitsFit = (bitSize % 8) == 0;
             this.bits = new Bits(new byte[(bitSize / 8 + (bitsFit ? 0 : 1))]);
         }
@@ -111,9 +120,9 @@ public class VendorConsent {
         int i = 0;
         for (boolean purpose : allowedPurposes) {
             if (purpose) {
-                bits.setBit(GdprConstants.PURPOSES_OFFSET + i++);
+                bits.setBit(PURPOSES_OFFSET + i++);
             } else {
-                bits.unsetBit(GdprConstants.PURPOSES_OFFSET + i++);
+                bits.unsetBit(PURPOSES_OFFSET + i++);
             }
         }
 
@@ -284,6 +293,14 @@ public class VendorConsent {
 
     /**
      *
+     * @return an integer equivalent of allowed purpose id bits according to this consent string
+     */
+    public int getAllowedPurposesBits() {
+        return bits.getInt(PURPOSES_OFFSET, PURPOSES_SIZE);
+    }
+
+    /**
+     *
      * @return the vendor list version which was used in creating this consent string
      */
     public int getVendorListVersion() {
@@ -424,7 +441,7 @@ public class VendorConsent {
         private int vendorListVersion;
         private int maxVendorId;
         private int vendorEncodingType;
-        private List<Boolean> allowedPurposes = new ArrayList<>(GdprConstants.PURPOSES_SIZE);
+        private List<Boolean> allowedPurposes = new ArrayList<>(PURPOSES_SIZE);
         // only used when bitfield is enabled
         private List<Integer> vendorsBitField;
         // only used when range entry is enabled
@@ -515,7 +532,7 @@ public class VendorConsent {
          */
         public Builder withAllowedPurposes(List<Integer> allowedPurposes) {
             this.integerPurposes = allowedPurposes;
-            for (int i = 0; i < GdprConstants.PURPOSES_SIZE; i++) {
+            for (int i = 0; i < PURPOSES_SIZE; i++) {
                 this.allowedPurposes.add(false);
             }
             for (int purpose : allowedPurposes) {
