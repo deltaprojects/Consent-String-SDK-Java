@@ -1,3 +1,4 @@
+![GitHub release](https://img.shields.io/github/release/InteractiveAdvertisingBureau/Consent-String-SDK-Java.svg)
 
 # Transparency and Consent Framework: Consent-String-SDK-Java
 
@@ -33,7 +34,7 @@ Add dependency to you pom.xml
 <dependency>
   <groupId>com.conversantmedia.gdpr</groupId>
   <artifactId>consent-string-sdk-java</artifactId>
-  <version>2.0.1</version>
+  <version>2.0.2</version>
 </dependency>
 ```
 
