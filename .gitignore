@@ -11,3 +11,4 @@ gradle-app.setting
 *.iml
 *.ipr
 /out/
+target/
