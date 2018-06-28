@@ -2,11 +2,11 @@ package com.iab.gdpr.consent;
 
 import com.iab.gdpr.Bits;
 import com.iab.gdpr.consent.implementation.v1.ByteBufferBackedVendorConsent;
+import com.iab.gdpr.exception.VendorConsentParseException;
 
 import java.util.Base64;
 
-import static com.iab.gdpr.GdprConstants.VERSION_BIT_OFFSET;
-import static com.iab.gdpr.GdprConstants.VERSION_BIT_SIZE;
+import static com.iab.gdpr.GdprConstants.*;
 
 /**
  * {@link VendorConsent} decoder from Base64 string. Right now only version 1 is know, but eventually
@@ -31,7 +31,11 @@ public class VendorConsentDecoder {
         final int version = getVersion(bits);
         switch (version) {
             case 1:
-                return new ByteBufferBackedVendorConsent(bits);
+                if (isValidate(bits)) {
+                    return new ByteBufferBackedVendorConsent(bits);
+                } else {
+                    throw new VendorConsentParseException("Found invalidate range entry");
+                }
             default:
                 throw new IllegalStateException("Unsupported version: " + version);
         }
@@ -53,5 +57,37 @@ public class VendorConsentDecoder {
      */
     private static boolean isNullOrEmpty(String string) {
         return string == null || string.isEmpty();
+    }
+
+    /***
+     * Utility method to check whether bits is validate or not
+     * now it only checks the entries
+     * @param bits value to check
+     * @return true if validate, otherwise false
+     */
+    private static boolean isValidate(Bits bits){
+        final int numEntries = bits.getInt(NUM_ENTRIES_OFFSET, NUM_ENTRIES_SIZE);
+        final int maxVendorId = bits.getInt(MAX_VENDOR_ID_OFFSET, MAX_VENDOR_ID_SIZE);
+        int currentOffset = RANGE_ENTRY_OFFSET;
+        for (int i = 0; i < numEntries; i++) {
+            boolean range = bits.getBit(currentOffset);
+            currentOffset++;
+            if (range) {
+                int startVendorId = bits.getInt(currentOffset, VENDOR_ID_SIZE);
+                currentOffset += VENDOR_ID_SIZE;
+                int endVendorId = bits.getInt(currentOffset, VENDOR_ID_SIZE);
+                currentOffset += VENDOR_ID_SIZE;
+                if (startVendorId > endVendorId || endVendorId > maxVendorId) {
+                    return false;
+                }
+            } else {
+                int singleVendorId = bits.getInt(currentOffset, VENDOR_ID_SIZE);
+                currentOffset += VENDOR_ID_SIZE;
+                if (singleVendorId > maxVendorId) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

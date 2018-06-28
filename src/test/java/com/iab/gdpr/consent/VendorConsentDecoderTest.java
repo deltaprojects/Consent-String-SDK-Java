@@ -74,7 +74,7 @@ public class VendorConsentDecoderTest {
     @Test
     public void testVersion1() {
         // Given: version 1 consent string
-        final String consentString = "BOOlLqOOOlLqTABABAENAk-AAAAXx7_______9______9uz_Gv_r_f__3nW8_39P3g_7_O3_7m_-zzV48_lrQV1yPAUCgA";
+        final String consentString = "BOOj_adOOj_adABABADEAb-AAAA-iATAAUAA2ADAAMgAgABIAC0AGQANAAcAA-ACKAEwAKIAaABFACQAHIAP0B9A";
 
         // When: decoder is called
         final VendorConsent vendorConsent = VendorConsentDecoder.fromBase64String(consentString);
