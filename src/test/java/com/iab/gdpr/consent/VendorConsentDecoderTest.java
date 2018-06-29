@@ -2,6 +2,7 @@ package com.iab.gdpr.consent;
 
 import com.iab.gdpr.Bits;
 import com.iab.gdpr.consent.implementation.v1.ByteBufferBackedVendorConsent;
+import com.iab.gdpr.exception.VendorConsentParseException;
 import org.junit.Test;
 
 import java.util.Base64;
@@ -74,13 +75,35 @@ public class VendorConsentDecoderTest {
     @Test
     public void testVersion1() {
         // Given: version 1 consent string
-        final String consentString = "BOOj_adOOj_adABABADEAb-AAAA-iATAAUAA2ADAAMgAgABIAC0AGQANAAcAA-ACKAEwAKIAaABFACQAHIAP0B9A";
+        final String consentString = "BOOlLqOOOlLqTABABAENAk-AAAAXx7_______9______9uz_Gv_r_f__3nW8_39P3g_7_O3_7m_-zzV48_lrQV1yPAUCgA";
 
         // When: decoder is called
         final VendorConsent vendorConsent = VendorConsentDecoder.fromBase64String(consentString);
 
         // Then: v1 ByteBufferVendorConsent is returned
         assertThat(vendorConsent.getClass(),is(ByteBufferBackedVendorConsent.class));
+
+    }
+
+    @Test(expected = VendorConsentParseException.class)
+    public void testMalformedRangEntry() {
+        // Given: malformed consent string
+        final String consentString = "BOOlLqOOOlLqTABABAENAk-AAAAXx7_______9______9uz_Gv_r_f__3nW8_39P3g_7_O3_7m_-zzV48_lrQV1yPAUCgA";
+
+        // When: decoder is called
+        final VendorConsent vendorConsent = VendorConsentDecoder.fromBase64String(consentString, true);
+
+
+    }
+
+    @Test(expected = VendorConsentParseException.class)
+    public void testMalformedRangEntry2() {
+        // Given: malformed consent string 2
+        final String consentString = "BAAAAAAOQEQsHAcABBENAR-AAAAceASAAyAAsABsAIAAKABoAFuAIoAxAA-ACYACoAJoAYQA5ADCAA-AKIAgYApQ";
+
+        // When: decoder is called
+        final VendorConsent vendorConsent = VendorConsentDecoder.fromBase64String(consentString, true);
+
 
     }
 

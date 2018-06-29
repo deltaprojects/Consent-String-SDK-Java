@@ -31,11 +31,35 @@ public class VendorConsentDecoder {
         final int version = getVersion(bits);
         switch (version) {
             case 1:
-                if (isValidate(bits)) {
-                    return new ByteBufferBackedVendorConsent(bits);
-                } else {
-                    throw new VendorConsentParseException("Found invalidate range entry");
+                return new ByteBufferBackedVendorConsent(bits);
+            default:
+                throw new IllegalStateException("Unsupported version: " + version);
+        }
+    }
+
+    public static VendorConsent fromBase64String(String consentString, boolean validate) {
+        if (isNullOrEmpty(consentString))
+            throw new IllegalArgumentException("Null or empty consent string passed as an argument");
+
+        return fromByteArray(BASE64_DECODER.decode(consentString), validate);
+    }
+
+    public static VendorConsent fromByteArray(byte[] bytes, boolean validate) {
+        if (bytes == null || bytes.length == 0)
+            throw new IllegalArgumentException("Null or empty consent bytes passed as an argument");
+
+        final Bits bits = new Bits(bytes);
+        final int version = getVersion(bits);
+        switch (version) {
+            case 1:
+                if(validate) {
+                    if (isValidate(bits)) {
+                        return new ByteBufferBackedVendorConsent(bits);
+                    } else {
+                        throw new VendorConsentParseException("Found invalidate range entry");
+                    }
                 }
+                return new ByteBufferBackedVendorConsent(bits);
             default:
                 throw new IllegalStateException("Unsupported version: " + version);
         }
