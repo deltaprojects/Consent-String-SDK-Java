@@ -88,17 +88,6 @@ public class VendorConsentDecoderTest {
     @Test(expected = VendorConsentParseException.class)
     public void testMalformedRangEntry() {
         // Given: malformed consent string
-        final String consentString = "BOOlLqOOOlLqTABABAENAk-AAAAXx7_______9______9uz_Gv_r_f__3nW8_39P3g_7_O3_7m_-zzV48_lrQV1yPAUCgA";
-
-        // When: decoder is called
-        final VendorConsent vendorConsent = VendorConsentDecoder.fromBase64String(consentString, true);
-
-
-    }
-
-    @Test(expected = VendorConsentParseException.class)
-    public void testMalformedRangEntry2() {
-        // Given: malformed consent string 2
         final String consentString = "BAAAAAAOQEQsHAcABBENAR-AAAAceASAAyAAsABsAIAAKABoAFuAIoAxAA-ACYACoAJoAYQA5ADCAA-AKIAgYApQ";
 
         // When: decoder is called

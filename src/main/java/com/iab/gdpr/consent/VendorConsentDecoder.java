@@ -89,7 +89,10 @@ public class VendorConsentDecoder {
      * @param bits value to check
      * @return true if validate, otherwise false
      */
-    private static boolean isValidate(Bits bits){
+    private static boolean isValidate(Bits bits) {
+        if (bits.getInt(ENCODING_TYPE_OFFSET, ENCODING_TYPE_SIZE) != VENDOR_ENCODING_RANGE) {
+            return true;
+        }
         final int numEntries = bits.getInt(NUM_ENTRIES_OFFSET, NUM_ENTRIES_SIZE);
         final int maxVendorId = bits.getInt(MAX_VENDOR_ID_OFFSET, MAX_VENDOR_ID_SIZE);
         int currentOffset = RANGE_ENTRY_OFFSET;
